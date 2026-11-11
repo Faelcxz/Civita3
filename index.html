@@ -92,6 +92,7 @@
             gap: 10px;
         }
 
+        /* Barra de navegação inferior fixa ACIMA dos modais para troca rápida */
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0;
@@ -101,16 +102,16 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            z-index: 1000;
+            z-index: 11000;
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.25);
             padding: 0 5px;
         }
 
         .nav-item {
             display: flex; flex-direction: column; align-items: center;
-            color: rgba(255, 255, 255, 0.8); text-decoration: none; font-size: 10px; padding: 4px; cursor: pointer; flex: 1;
+            color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 10px; padding: 4px; cursor: pointer; flex: 1;
         }
         .nav-item.active { color: var(--texto-claro); font-weight: bold; }
         .nav-item.active i {
@@ -120,12 +121,13 @@
         }
         .nav-item i { font-size: 16px; margin-bottom: 3px; }
 
-        /* Modais Tela Cheia */
+        /* Modais Tela Cheia (deixam espaço para a barra verde inferior) */
         .modal-fullscreen {
             display: none;
             position: fixed;
             top: 0; left: 0;
-            width: 100%; height: 100vh;
+            width: 100%; 
+            height: calc(100vh - var(--nav-height));
             background: #ffffff;
             z-index: 10000;
             flex-direction: column;
@@ -149,14 +151,13 @@
         .btn-fechar-modal { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
 
         .modal-body {
-            padding: 20px;
+            padding: 20px 20px 80px 20px; /* Padding extra embaixo para não cobrir o conteúdo */
             max-width: 800px;
             width: 100%;
             margin: 0 auto;
             flex: 1;
         }
 
-        /* Estilos de Componentes Internos */
         .grid-categorias {
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;
         }
@@ -187,17 +188,16 @@
         .btn-cancelar { background: #f1f5f9; color: #64748b; }
         .btn-enviar { background: var(--primario); color: white; }
 
-        /* Estilo Central de Comando */
         .card-denuncia-central {
             background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; margin-bottom: 15px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 8px;
         }
         .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: #fef3c7; color: #d97706; }
 
-        /* Grade Pinterest Galeria */
+        /* Grade Pinterest Galeria Cultural com imagens IA */
         .pinterest-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 15px;
         }
         .pin-card {
@@ -206,7 +206,7 @@
         }
         .pin-card:hover { transform: translateY(-3px); }
         .pin-img {
-            background: #e2e8f0; height: 130px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #94a3b8;
+            height: 140px; background-size: cover; background-position: center; position: relative;
         }
         .pin-body { padding: 12px; }
         .pin-title { font-size: 13px; font-weight: bold; color: var(--texto-escuro); margin-bottom: 4px; }
@@ -233,8 +233,9 @@
         <i class="fas fa-camera"></i> Nova Denúncia
     </button>
 
+    <!-- Barra inferior fixa visível em todas as telas -->
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active" onclick="alternarAba(event, 'inicio')"><i class="fas fa-home"></i><span>Início</span></a>
+        <a href="#" class="nav-item active" onclick="irParaInicio(event)"><i class="fas fa-home"></i><span>Início</span></a>
         <a href="#" class="nav-item" onclick="abrirTelaCheia('modalCentral')"><i class="fas fa-shield-alt"></i><span>Central</span></a>
         <a href="#" class="nav-item" onclick="abrirTelaCheia('modalCultura')"><i class="fas fa-palette"></i><span>Cultura</span></a>
         <a href="#" class="nav-item" onclick="abrirTelaCheia('modalSuporte')"><i class="fas fa-question-circle"></i><span>Suporte</span></a>
@@ -245,7 +246,7 @@
     <div class="modal-fullscreen" id="modalDenuncia">
         <div class="modal-header">
             <h3><i class="fas fa-bullhorn" style="color:var(--destaque)"></i> Reportar Problema Urbano</h3>
-            <button class="btn-fechar-modal" onclick="fecharTelaCheia('modalDenuncia')"><i class="fas fa-times"></i></button>
+            <button class="btn-fechar-modal" onclick="fecharTodasTelas()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
             <form onsubmit="salvarDenuncia(event)">
@@ -290,78 +291,73 @@
                 </div>
 
                 <div class="botoes-acoes">
-                    <button type="button" class="btn-cancelar" onclick="fecharTelaCheia('modalDenuncia')">Cancelar</button>
+                    <button type="button" class="btn-cancelar" onclick="fecharTodasTelas()">Cancelar</button>
                     <button type="submit" class="btn-enviar">Transmitir Ocorrência</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- 2. MODAL TELA CHEIA: CENTRAL DE COMANDO -->
+    <!-- 2. MODAL TELA CHEIA: CENTRAL DE COMANDO COM LOGIN DE ADMINISTRADOR -->
     <div class="modal-fullscreen" id="modalCentral">
         <div class="modal-header" style="background: #1e293b;">
             <h3><i class="fas fa-shield-alt" style="color:var(--primario)"></i> Central de Comando & Gestão Municipal</h3>
-            <button class="btn-fechar-modal" onclick="fecharTelaCheia('modalCentral')"><i class="fas fa-times"></i></button>
+            <button class="btn-fechar-modal" onclick="fecharTodasTelas()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <p style="font-size: 13px; color: #64748b;">Painel administrativo integrado com o mapeamento urbano de Itajubá.</p>
-                <button onclick="carregarListaCentral()" style="background: #e2e8f0; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold;"><i class="fas fa-sync-alt"></i> Atualizar</button>
+            <!-- Tela de Login do Admin -->
+            <div id="adminLoginBox" style="max-width: 400px; margin: 40px auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <i class="fas fa-user-shield" style="font-size: 40px; color: var(--texto-escuro); margin-bottom: 10px;"></i>
+                    <h4 style="font-size: 16px; color: var(--texto-escuro);">Acesso Restrito ao Gestor</h4>
+                    <p style="font-size: 12px; color: #64748b;">Insira as credenciais administrativas para visualizar denúncias.</p>
+                </div>
+                <form onsubmit="fazerLoginAdmin(event)">
+                    <div class="campo-grupo">
+                        <label>Usuário:</label>
+                        <input type="text" id="adminUser" placeholder="Ex: admin" required>
+                    </div>
+                    <div class="campo-grupo">
+                        <label>Senha:</label>
+                        <input type="password" id="adminPass" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-enviar" style="width: 100%; border-radius: 10px; padding: 12px;">Entrar na Central</button>
+                </form>
             </div>
-            <div id="containerListaDenuncias">
-                <!-- Preenchido via JavaScript dinamicamente -->
+
+            <!-- Painel Protegido (Visível apenas após login correto) -->
+            <div id="adminPainelBox" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <p style="font-size: 13px; color: #64748b;">Painel administrativo logado com sucesso.</p>
+                    <div>
+                        <button onclick="carregarListaCentral()" style="background: #e2e8f0; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; margin-right: 6px;"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                        <button onclick="sairAdmin()" style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold;"><i class="fas fa-sign-out-alt"></i> Sair</button>
+                    </div>
+                </div>
+                <div id="containerListaDenuncias">
+                    <!-- Preenchido via JS -->
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. MODAL TELA CHEIA: CULTURA & ARTE -->
+    <!-- 3. MODAL TELA CHEIA: CULTURA & ARTE (20+ Artes geradas por IA) -->
     <div class="modal-fullscreen" id="modalCultura">
         <div class="modal-header" style="background: #8bb30d;">
-            <h3><i class="fas fa-palette"></i> Circuito Cultural de Itajubá</h3>
-            <button class="btn-fechar-modal" onclick="fecharTelaCheia('modalCultura')"><i class="fas fa-times"></i></button>
+            <h3><i class="fas fa-palette"></i> Circuito Cultural & Galeria IA de Itajubá</h3>
+            <button class="btn-fechar-modal" onclick="fecharTodasTelas()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
             <p style="font-size: 13px; color: #64748b; margin-bottom: 15px; line-height: 1.5;">
-                Conectando artistas independentes, murais urbanos e apoiando iniciativas culturais locais em Itajubá. Adquira obras ou apoie o Fundo Municipal.
+                Explore mais de 20 obras e conceitos artísticos gerados por IA inspirados na cultura urbana, paisagens e modernidade de Itajubá.
             </p>
 
             <button onclick="alert('Redirecionando para o portal de doação voluntária municipal Pix/Cartão.')" style="width: 100%; background: linear-gradient(135deg, #f39c12, #d35400); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);">
                 <i class="fas fa-hand-holding-heart"></i> Fazer Doação Voluntária para Artistas & ONGs
             </button>
 
-            <div class="pinterest-grid">
-                <div class="pin-card">
-                    <div class="pin-img"><i class="fas fa-image"></i></div>
-                    <div class="pin-body">
-                        <div class="pin-title">Rua Nova em Óleo</div>
-                        <div class="pin-author">Por Ana Beatriz</div>
-                        <button onclick="alert('Exibido na Galeria Municipal de Arte.')" style="width:100%; background:#f1f5f9; color:#475569; border:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">Ver Detalhes</button>
-                    </div>
-                </div>
-                <div class="pin-card">
-                    <div class="pin-img"><i class="fas fa-image"></i></div>
-                    <div class="pin-body">
-                        <div class="pin-title">Igreja Matriz Histórica</div>
-                        <div class="pin-author">Carlos Silva — R$ 120</div>
-                        <button onclick="alert('Obra disponível para aquisição via Pix.')" style="width:100%; background:#27ae60; color:white; border:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">Comprar Obra</button>
-                    </div>
-                </div>
-                <div class="pin-card">
-                    <div class="pin-img"><i class="fas fa-image"></i></div>
-                    <div class="pin-body">
-                        <div class="pin-title">Praça Getúlio Vargas</div>
-                        <div class="pin-author">Por Marcos Lima</div>
-                        <button onclick="alert('Exibido na Galeria Municipal de Arte.')" style="width:100%; background:#f1f5f9; color:#475569; border:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">Ver Detalhes</button>
-                    </div>
-                </div>
-                <div class="pin-card">
-                    <div class="pin-img"><i class="fas fa-image"></i></div>
-                    <div class="pin-body">
-                        <div class="pin-title">Pôr do Sol no Rio Sapucaí</div>
-                        <div class="pin-author">Julia Dias — R$ 85</div>
-                        <button onclick="alert('Obra disponível para aquisição via Pix.')" style="width:100%; background:#27ae60; color:white; border:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">Comprar Obra</button>
-                    </div>
-                </div>
+            <div class="pinterest-grid" id="galeriaCulturaGrid">
+                <!-- Injetado dinamicamente com 20+ artes geradas por IA via script -->
             </div>
         </div>
     </div>
@@ -370,7 +366,7 @@
     <div class="modal-fullscreen" id="modalSuporte">
         <div class="modal-header" style="background: #2c3e50;">
             <h3><i class="fas fa-headset"></i> Central de Ajuda & Ouvidoria</h3>
-            <button class="btn-fechar-modal" onclick="fecharTelaCheia('modalSuporte')"><i class="fas fa-times"></i></button>
+            <button class="btn-fechar-modal" onclick="fecharTodasTelas()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
             <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Tire dúvidas sobre o funcionamento do Civita ou envie um chamado direto para a equipe de engenharia e urbanismo.</p>
@@ -410,7 +406,7 @@
     <div class="modal-fullscreen" id="modalConfig">
         <div class="modal-header" style="background: #475569;">
             <h3><i class="fas fa-cog"></i> Ajustes do Aplicativo</h3>
-            <button class="btn-fechar-modal" onclick="fecharTelaCheia('modalConfig')"><i class="fas fa-times"></i></button>
+            <button class="btn-fechar-modal" onclick="fecharTodasTelas()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
             <div style="display: flex; flex-direction: column; gap: 20px; font-size: 14px;">
@@ -439,10 +435,10 @@
                 </div>
 
                 <div style="background: #f8fafc; padding: 15px; border-radius: 10px; text-align: center; font-size: 12px; color: #64748b;">
-                    <b>Civita v2.0.0 (Edição Itajubá Inteligente)</b><br>Desenvolvido para cidades sustentáveis e participativas.
+                    <b>Civita v2.1.0 (Edição Itajubá Inteligente)</b><br>Desenvolvido para cidades sustentáveis e participativas.
                 </div>
 
-                <button onclick="fecharTelaCheia('modalConfig')" class="btn-enviar" style="width:100%; border-radius:10px; padding:12px;">Salvar Preferências</button>
+                <button onclick="fecharTodasTelas()" class="btn-enviar" style="width:100%; border-radius:10px; padding:12px;">Salvar Preferências</button>
             </div>
         </div>
     </div>
@@ -450,7 +446,7 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Limites estritos centrados estritamente em Itajubá / MG
+        // Limites estritos centrados em Itajubá / MG
         const boundsItajuba = L.latLngBounds(
             [-22.4800, -45.5000], 
             [-22.3800, -45.4000]  
@@ -504,24 +500,42 @@
             }
         }
 
-        // Funções de controle de Modais Tela Cheia
-        function abrirModalDenuncia() { document.getElementById('modalDenuncia').style.display = 'flex'; }
+        // Funções de controle de Modais e Navegação sem perder a barra inferior
+        function abrirModalDenuncia() {
+            fecharTodasTelas();
+            document.getElementById('modalDenuncia').style.display = 'flex';
+        }
         
         function abrirTelaCheia(idModal) {
+            fecharTodasTelas();
             document.getElementById(idModal).style.display = 'flex';
-            if (idModal === 'modalCentral') {
-                carregarListaCentral();
-            }
-        }
-        
-        function fecharTelaCheia(idModal) {
-            document.getElementById(idModal).style.display = 'none';
+            
+            // Atualizar active da barra inferior
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if (idModal === 'modalCentral') eventNavAtivar(1);
+            if (idModal === 'modalCultura') eventNavAtivar(2);
+            if (idModal === 'modalSuporte') eventNavAtivar(3);
+            if (idModal === 'modalConfig') eventNavAtivar(4);
         }
 
-        function alternarAba(e, aba) {
-            e.preventDefault();
+        function irParaInicio(e) {
+            if (e) e.preventDefault();
+            fecharTodasTelas();
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            e.currentTarget.classList.add('active');
+            document.querySelectorAll('.nav-item')[0].classList.add('active');
+        }
+
+        function fecharTodasTelas() {
+            document.getElementById('modalDenuncia').style.display = 'none';
+            document.getElementById('modalCentral').style.display = 'none';
+            document.getElementById('modalCultura').style.display = 'none';
+            document.getElementById('modalSuporte').style.display = 'none';
+            document.getElementById('modalConfig').style.display = 'none';
+        }
+
+        function eventNavAtivar(index) {
+            const itens = document.querySelectorAll('.nav-item');
+            if (itens[index]) itens[index].classList.add('active');
         }
 
         function toggleFaq(el) {
@@ -532,7 +546,8 @@
         function enviarSuporte(e) {
             e.preventDefault();
             alert("Mensagem transmitida com sucesso para a Ouvidoria Municipal!");
-            fecharTelaCheia('modalSuporte');
+            fecharTodasTelas();
+            irParaInicio();
             e.target.reset();
         }
 
@@ -550,7 +565,30 @@
             }
         }
 
-        // Sistema de Salvamento e Central de Comando
+        // Sistema de Login do Administrador para a Central
+        function fazerLoginAdmin(e) {
+            e.preventDefault();
+            const u = document.getElementById('adminUser').value.trim();
+            const p = document.getElementById('adminPass').value.trim();
+
+            // Credenciais de acesso do administrador
+            if (u === 'admin' && p === 'admin123') {
+                document.getElementById('adminLoginBox').style.display = 'none';
+                document.getElementById('adminPainelBox').style.display = 'block';
+                carregarListaCentral();
+            } else {
+                alert("Usuário ou senha incorretos. Utilize admin / admin123 para testes.");
+            }
+        }
+
+        function sairAdmin() {
+            document.getElementById('adminLoginBox').style.display = 'block';
+            document.getElementById('adminPainelBox').style.display = 'none';
+            document.getElementById('adminUser').value = '';
+            document.getElementById('adminPass').value = '';
+        }
+
+        // Salvamento e Central de Comando
         function salvarDenuncia(event) {
             event.preventDefault();
             const categoria = document.getElementById('categoriaSelecionada').value;
@@ -560,7 +598,6 @@
             const fotoInput = document.getElementById('fotoInput');
             const nomeFoto = (fotoInput.files && fotoInput.files[0]) ? fotoInput.files[0].name : "Sem foto";
             
-            // Gerar coordenadas dentro do perímetro urbano de Itajubá
             const lat = -22.4250 + ((Math.random() - 0.5) * 0.006);
             const lon = -45.4520 + ((Math.random() - 0.5) * 0.006);
 
@@ -583,7 +620,8 @@
 
             adicionarMarcadorMapa(novaOcorrencia);
 
-            fecharTelaCheia('modalDenuncia');
+            fecharTodasTelas();
+            irParaInicio();
             alert("Denúncia registrada e enviada diretamente para a Central de Comando!");
             
             document.getElementById('localizacaoTxt').value = '';
@@ -632,10 +670,45 @@
             container.innerHTML = html;
         }
 
-        // Carregar marcadores salvos no mapa ao iniciar
+        // Geração automática de mais de 20 artes geradas por IA para a galeria cultural
+        function gerarGaleriaCulturaIA() {
+            const grid = document.getElementById('galeriaCulturaGrid');
+            const autores = ["Ana Beatriz", "Carlos Silva", "Marcos Lima", "Julia Dias", "Lucas Martins", "Beatriz Souza", "Gabriel Faria"];
+            const titulos = [
+                "Amanhecer na Av. BPS", "Conexão Tecnológica", "Praça em Óleo Digital", "Sinfonia do Sapucaí",
+                "Abstração Urbana #01", "Cores do Pinheirinho", "Memórias de Itajubá", "Geometria Urbana",
+                "Arquitetura Moderna", "Luzes do Centro", "Horizonte Sul Mineiro", "Raízes e Cabos",
+                "Passagem Secreta", "Expressão Estudantil", "Cores da Praça", "Contraste Urbano",
+                "Aquarela do Vale", "Reflexos na Rua", "Inovação e Arte", "Instalação Coletiva"
+            ];
+
+            let html = '';
+            for (let i = 0; i < 20; i++) {
+                const autor = autores[i % autores.length];
+                const titulo = titulos[i];
+                // Imagens de alta qualidade simulando artes geradas por IA via Unsplash Seed
+                const seedImg = `https://picsum.photos/seed/itajubaart${i+1}/300/200`;
+                const preco = (i % 2 === 0) ? `R$ ${(i + 1) * 25}` : null;
+
+                html += `
+                    <div class="pin-card">
+                        <div class="pin-img" style="background-image: url('${seedImg}');"></div>
+                        <div class="pin-body">
+                            <div class="pin-title">${titulo}</div>
+                            <div class="pin-author">Por ${autor} ${preco ? '— ' + preco : ''}</div>
+                            <button onclick="alert('${preco ? 'Redirecionando para compra da obra gerada por IA!' : 'Exibido na Galeria Municipal de Arte Digital.'}')" style="width:100%; background:${preco ? '#27ae60' : '#f1f5f9'}; color:${preco ? 'white' : '#475569'}; border:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">${preco ? 'Comprar Obra' : 'Ver Detalhes'}</button>
+                        </div>
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+        }
+
+        // Inicialização ao carregar a página
         window.addEventListener('DOMContentLoaded', () => {
             let listaDenuncias = JSON.parse(localStorage.getItem('civita_denuncias')) || [];
             listaDenuncias.forEach(item => adicionarMarcadorMapa(item));
+            gerarGaleriaCulturaIA();
         });
     </script>
 </body>
