@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Civita - Mapa e Denúncias</title>
+    <title>Civita - Central Inteligente de Itajubá</title>
 
     <!-- CSS do Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -77,7 +77,7 @@
             position: fixed;
             bottom: calc(var(--nav-height) + 20px);
             right: 20px;
-            z-index: 1000;
+            z-index: 999;
             background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
             border: none;
@@ -105,130 +105,151 @@
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
-            padding: 0 10px;
+            padding: 0 5px;
         }
 
         .nav-item {
             display: flex; flex-direction: column; align-items: center;
-            color: rgba(255, 255, 255, 0.8); text-decoration: none; font-size: 11px; padding: 6px; cursor: pointer;
+            color: rgba(255, 255, 255, 0.8); text-decoration: none; font-size: 10px; padding: 4px; cursor: pointer; flex: 1;
         }
         .nav-item.active { color: var(--texto-claro); font-weight: bold; }
         .nav-item.active i {
             background-color: var(--texto-claro); color: var(--primario);
-            padding: 10px; border-radius: 15px; margin-bottom: 2px;
-            transform: translateY(-10px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            padding: 8px; border-radius: 12px; margin-bottom: 2px;
+            transform: translateY(-8px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-        .nav-item i { font-size: 18px; margin-bottom: 4px; }
+        .nav-item i { font-size: 16px; margin-bottom: 3px; }
 
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 10000; justify-content: center; align-items: flex-end;
+        /* Modais Tela Cheia */
+        .modal-fullscreen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100vh;
+            background: #ffffff;
+            z-index: 10000;
+            flex-direction: column;
+            overflow-y: auto;
         }
 
-        .modal-content {
-            background: white; width: 100%; max-width: 500px;
-            max-height: 90vh; overflow-y: auto;
-            border-top-left-radius: 25px; border-top-right-radius: 25px;
-            padding: 25px; box-shadow: 0 -5px 25px rgba(0,0,0,0.2);
+        .modal-header {
+            background: var(--texto-escuro);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
-        .modal-content h3 { margin-bottom: 15px; color: var(--texto-escuro); font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        .modal-header h3 { font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .btn-fechar-modal { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
 
+        .modal-body {
+            padding: 20px;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        /* Estilos de Componentes Internos */
         .grid-categorias {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;
         }
         .cat-card {
-            border: 2px solid #e2e8f0; border-radius: 10px; padding: 10px;
+            border: 2px solid #e2e8f0; border-radius: 12px; padding: 12px;
             text-align: center; cursor: pointer; background: #fafafa; transition: all 0.2s;
         }
-        .cat-card i { font-size: 20px; margin-bottom: 4px; display: block; }
+        .cat-card i { font-size: 22px; margin-bottom: 6px; display: block; }
         .cat-card span { font-size: 12px; font-weight: 600; color: var(--texto-escuro); }
         .cat-card.selected { border-color: var(--primario); background: #f4f8e8; }
 
-        .campo-grupo { margin-bottom: 12px; }
+        .campo-grupo { margin-bottom: 15px; }
+        .campo-grupo label { font-size: 12px; font-weight: bold; color: var(--texto-escuro); margin-bottom: 5px; display: block; }
         .campo-grupo input, .campo-grupo textarea, .campo-grupo select {
-            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; background: #f9f9f9;
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; background: #f9f9f9; outline: none;
         }
 
         .btn-upload {
             border: 2px dashed #cbd5e1; color: #64748b; background-color: #f8fafc;
-            padding: 10px; border-radius: 10px; font-weight: 600; width: 100%;
+            padding: 12px; border-radius: 10px; font-weight: 600; width: 100%;
             text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px;
         }
         .upload-btn-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
         .upload-btn-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
 
-        .botoes-acoes { display: flex; gap: 10px; margin-top: 15px; }
-        .botoes-acoes button { flex: 1; padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .botoes-acoes { display: flex; gap: 10px; margin-top: 20px; }
+        .botoes-acoes button { flex: 1; padding: 14px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px; }
         .btn-cancelar { background: #f1f5f9; color: #64748b; }
         .btn-enviar { background: var(--primario); color: white; }
 
+        /* Estilo Central de Comando */
+        .card-denuncia-central {
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 8px;
+        }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: #fef3c7; color: #d97706; }
+
+        /* Grade Pinterest Galeria */
         .pinterest-grid {
-            display: columns;
-            column-count: 2;
-            column-gap: 12px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 4px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
         }
         .pin-card {
-            break-inside: avoid;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s;
         }
-        .pin-card:hover { transform: translateY(-2px); }
+        .pin-card:hover { transform: translateY(-3px); }
         .pin-img {
-            background: #e2e8f0;
-            height: 110px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: #94a3b8;
+            background: #e2e8f0; height: 130px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #94a3b8;
         }
-        .pin-body { padding: 10px; }
-        .pin-title { font-size: 12px; font-weight: bold; color: var(--texto-escuro); margin-bottom: 2px; }
-        .pin-author { font-size: 11px; color: #64748b; margin-bottom: 8px; }
+        .pin-body { padding: 12px; }
+        .pin-title { font-size: 13px; font-weight: bold; color: var(--texto-escuro); margin-bottom: 4px; }
+        .pin-author { font-size: 12px; color: #64748b; margin-bottom: 10px; }
 
-        .faq-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; padding: 10px 12px; }
+        .faq-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; padding: 12px; }
         .faq-pergunta { font-weight: bold; font-size: 13px; color: var(--texto-escuro); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .faq-resposta { font-size: 12px; color: #64748b; margin-top: 6px; line-height: 1.4; display: none; }
+        .faq-resposta { font-size: 12px; color: #64748b; margin-top: 8px; line-height: 1.5; display: none; }
     </style>
 </head>
 <body>
 
     <header>
-        <img src="logo.png.png" alt="Civita Logo" class="logo-img">
+        <img src="logo.png" alt="Civita Logo" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3177/3177440.png'">
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" placeholder="Pesquisar ruas, obras ou denúncias..." id="inputBusca">
+            <input type="text" placeholder="Buscar rua exata em Itajubá (Ex: Av. BPS, Praça Getúlio Vargas)..." id="inputBusca" onkeypress="buscarRua(event)">
         </div>
     </header>
 
     <div id="mapa"></div>
 
-    <button class="btn-denuncia" onclick="abrirModal()">
+    <button class="btn-denuncia" onclick="abrirModalDenuncia()">
         <i class="fas fa-camera"></i> Nova Denúncia
     </button>
 
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active"><i class="fas fa-home"></i><span>Início</span></a>
-        <a href="#" class="nav-item" onclick="abrirCultura(event)"><i class="fas fa-palette"></i><span>Cultura</span></a>
-        <a href="#" class="nav-item" onclick="abrirSuporte(event)"><i class="fas fa-question-circle"></i><span>Suporte</span></a>
-        <a href="#" class="nav-item" onclick="abrirConfiguracoes(event)"><i class="fas fa-cog"></i><span>Configurações</span></a>
+        <a href="#" class="nav-item active" onclick="alternarAba(event, 'inicio')"><i class="fas fa-home"></i><span>Início</span></a>
+        <a href="#" class="nav-item" onclick="abrirTelaCheia('modalCentral')"><i class="fas fa-shield-alt"></i><span>Central</span></a>
+        <a href="#" class="nav-item" onclick="abrirTelaCheia('modalCultura')"><i class="fas fa-palette"></i><span>Cultura</span></a>
+        <a href="#" class="nav-item" onclick="abrirTelaCheia('modalSuporte')"><i class="fas fa-question-circle"></i><span>Suporte</span></a>
+        <a href="#" class="nav-item" onclick="abrirTelaCheia('modalConfig')"><i class="fas fa-cog"></i><span>Ajustes</span></a>
     </nav>
 
-    <!-- Modal de Denúncias -->
-    <div class="modal-overlay" id="modalDenuncia">
-        <div class="modal-content">
-            <h3><i class="fas fa-bullhorn" style="color:var(--destaque)"></i> Reportar à Central</h3>
+    <!-- 1. MODAL TELA CHEIA: NOVA DENÚNCIA -->
+    <div class="modal-fullscreen" id="modalDenuncia">
+        <div class="modal-header">
+            <h3><i class="fas fa-bullhorn" style="color:var(--destaque)"></i> Reportar Problema Urbano</h3>
+            <button class="btn-fechar-modal" onclick="fecharTelaCheia('modalDenuncia')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
             <form onsubmit="salvarDenuncia(event)">
-                <label style="font-size: 12px; font-weight: bold; color: var(--texto-escuro); margin-bottom: 6px; display: block;">Selecione o tipo de problema:</label>
+                <label>Selecione a categoria da ocorrência:</label>
                 <div class="grid-categorias">
                     <div class="cat-card selected" onclick="selecionarCategoria(this, 'Infraestrutura Cultural', '#3498db')">
                         <i class="fas fa-landmark" style="color: #3498db;"></i><span>Cultura & Arte</span>
@@ -236,56 +257,75 @@
                     <div class="cat-card" onclick="selecionarCategoria(this, 'Espaço Abandonado', '#9b59b6')">
                         <i class="fas fa-house-crack" style="color: #9b59b6;"></i><span>Espaço Abandonado</span>
                     </div>
-                    <div class="cat-card" onclick="selecionarCategoria(this, 'Rua Esburacada', '#e74c3c')">
+                    <div class="cat-card" onclick="selecionarCategoria(this, 'Buraco na Via', '#e74c3c')">
                         <i class="fas fa-road" style="color: #e74c3c;"></i><span>Buraco na Via</span>
                     </div>
-                    <div class="cat-card" onclick="selecionarCategoria(this, 'Falta de Acessibilidade', '#2ecc71')">
+                    <div class="cat-card" onclick="selecionarCategoria(this, 'Acessibilidade', '#2ecc71')">
                         <i class="fas fa-wheelchair" style="color: #2ecc71;"></i><span>Acessibilidade</span>
                     </div>
-                    <div class="cat-card" onclick="selecionarCategoria(this, 'Falta de Sinalização', '#f39c12')" style="grid-column: span 2;">
-                        <i class="fas fa-signs-post" style="color: #f39c12;"></i><span>Falta de Sinalização</span>
+                    <div class="cat-card" onclick="selecionarCategoria(this, 'Iluminação Pública', '#f39c12')" style="grid-column: span 2;">
+                        <i class="fas fa-lightbulb" style="color: #f39c12;"></i><span>Iluminação / Sinalização</span>
                     </div>
                 </div>
                 <input type="hidden" id="categoriaSelecionada" value="Infraestrutura Cultural">
                 <input type="hidden" id="corSelecionada" value="#3498db">
 
                 <div class="campo-grupo">
-                    <input type="text" id="localizacaoTxt" placeholder="Endereço ou referência do local" required>
+                    <label>Endereço ou Ponto de Referência em Itajubá:</label>
+                    <input type="text" id="localizacaoTxt" placeholder="Ex: Avenida BPS, 1303 - Pinheirinho" required>
                 </div>
 
                 <div class="campo-grupo">
+                    <label>Evidência Fotográfica:</label>
                     <div class="upload-btn-wrapper">
-                        <button type="button" class="btn-upload"><i class="fas fa-camera"></i> Adicionar Foto do Local</button>
+                        <button type="button" class="btn-upload"><i class="fas fa-camera"></i> Tirar ou Escolher Foto</button>
                         <input type="file" id="fotoInput" accept="image/*" onchange="mostrarNomeFoto(this)">
                     </div>
-                    <small id="nomeFoto" style="color: #64748b; font-size: 11px; margin-top: 4px; display: block;"></small>
+                    <small id="nomeFoto" style="color: #16a34a; font-size: 11px; margin-top: 6px; display: block;"></small>
                 </div>
 
                 <div class="campo-grupo">
-                    <textarea id="observacoes" rows="2" placeholder="Descreva brevemente..."></textarea>
+                    <label>Descrição Detalhada:</label>
+                    <textarea id="observacoes" rows="3" placeholder="Relate o problema com detalhes para a equipe técnica..."></textarea>
                 </div>
 
                 <div class="botoes-acoes">
-                    <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
-                    <button type="submit" class="btn-enviar">Enviar</button>
+                    <button type="button" class="btn-cancelar" onclick="fecharTelaCheia('modalDenuncia')">Cancelar</button>
+                    <button type="submit" class="btn-enviar">Transmitir Ocorrência</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal de Cultura -->
-    <div class="modal-overlay" id="modalCultura">
-        <div class="modal-content" style="max-width: 550px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h3><i class="fas fa-palette" style="color:var(--primario-escuro)"></i> Galeria Cultural de Itajubá</h3>
-                <button onclick="fecharCultura()" style="background:none; border:none; font-size: 18px; cursor:pointer; color:#64748b;"><i class="fas fa-times"></i></button>
+    <!-- 2. MODAL TELA CHEIA: CENTRAL DE COMANDO -->
+    <div class="modal-fullscreen" id="modalCentral">
+        <div class="modal-header" style="background: #1e293b;">
+            <h3><i class="fas fa-shield-alt" style="color:var(--primario)"></i> Central de Comando & Gestão Municipal</h3>
+            <button class="btn-fechar-modal" onclick="fecharTelaCheia('modalCentral')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <p style="font-size: 13px; color: #64748b;">Painel administrativo integrado com o mapeamento urbano de Itajubá.</p>
+                <button onclick="carregarListaCentral()" style="background: #e2e8f0; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold;"><i class="fas fa-sync-alt"></i> Atualizar</button>
             </div>
-            
-            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">
-                Explore a arte independente da cidade em formato de galeria. Apoie os artistas locais diretamente pelas obras ou utilize o botão de doações abaixo.
+            <div id="containerListaDenuncias">
+                <!-- Preenchido via JavaScript dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MODAL TELA CHEIA: CULTURA & ARTE -->
+    <div class="modal-fullscreen" id="modalCultura">
+        <div class="modal-header" style="background: #8bb30d;">
+            <h3><i class="fas fa-palette"></i> Circuito Cultural de Itajubá</h3>
+            <button class="btn-fechar-modal" onclick="fecharTelaCheia('modalCultura')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px; line-height: 1.5;">
+                Conectando artistas independentes, murais urbanos e apoiando iniciativas culturais locais em Itajubá. Adquira obras ou apoie o Fundo Municipal.
             </p>
 
-            <button onclick="abrirDoacoes()" style="width: 100%; background: linear-gradient(135deg, #f39c12, #d35400); color: white; border: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);">
+            <button onclick="alert('Redirecionando para o portal de doação voluntária municipal Pix/Cartão.')" style="width: 100%; background: linear-gradient(135deg, #f39c12, #d35400); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);">
                 <i class="fas fa-hand-holding-heart"></i> Fazer Doação Voluntária para Artistas & ONGs
             </button>
 
@@ -295,141 +335,114 @@
                     <div class="pin-body">
                         <div class="pin-title">Rua Nova em Óleo</div>
                         <div class="pin-author">Por Ana Beatriz</div>
-                        <button onclick="alert('Exposição artística municipal')" style="width:100%; background:#f1f5f9; color:#475569; border:none; padding:5px; border-radius:6px; font-size:10px; font-weight:bold; cursor:pointer;">Ver Detalhes</button>
+                        <button onclick="alert('Exibido na Galeria Municipal de Arte.')" style="width:100%; background:#f1f5f9; color:#475569; border:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">Ver Detalhes</button>
                     </div>
                 </div>
-
                 <div class="pin-card">
                     <div class="pin-img"><i class="fas fa-image"></i></div>
                     <div class="pin-body">
-                        <div class="pin-title">Igreja Matriz</div>
+                        <div class="pin-title">Igreja Matriz Histórica</div>
                         <div class="pin-author">Carlos Silva — R$ 120</div>
-                        <button onclick="alert('Redirecionando para compra da obra!')" style="width:100%; background:#27ae60; color:white; border:none; padding:5px; border-radius:6px; font-size:10px; font-weight:bold; cursor:pointer;">Comprar Obra</button>
+                        <button onclick="alert('Obra disponível para aquisição via Pix.')" style="width:100%; background:#27ae60; color:white; border:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">Comprar Obra</button>
                     </div>
                 </div>
-
                 <div class="pin-card">
                     <div class="pin-img"><i class="fas fa-image"></i></div>
                     <div class="pin-body">
                         <div class="pin-title">Praça Getúlio Vargas</div>
                         <div class="pin-author">Por Marcos Lima</div>
-                        <button onclick="alert('Exposição artística municipal')" style="width:100%; background:#f1f5f9; color:#475569; border:none; padding:5px; border-radius:6px; font-size:10px; font-weight:bold; cursor:pointer;">Ver Detalhes</button>
+                        <button onclick="alert('Exibido na Galeria Municipal de Arte.')" style="width:100%; background:#f1f5f9; color:#475569; border:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">Ver Detalhes</button>
                     </div>
                 </div>
-
                 <div class="pin-card">
                     <div class="pin-img"><i class="fas fa-image"></i></div>
                     <div class="pin-body">
                         <div class="pin-title">Pôr do Sol no Rio Sapucaí</div>
                         <div class="pin-author">Julia Dias — R$ 85</div>
-                        <button onclick="alert('Redirecionando para compra da obra!')" style="width:100%; background:#27ae60; color:white; border:none; padding:5px; border-radius:6px; font-size:10px; font-weight:bold; cursor:pointer;">Comprar Obra</button>
+                        <button onclick="alert('Obra disponível para aquisição via Pix.')" style="width:100%; background:#27ae60; color:white; border:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">Comprar Obra</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Doações -->
-    <div class="modal-overlay" id="modalDoacoes" style="z-index: 10001;">
-        <div class="modal-content" style="max-width: 400px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h3><i class="fas fa-hand-holding-heart" style="color:#f39c12"></i> Apoio Solidário</h3>
-                <button onclick="fecharDoacoes()" style="background:none; border:none; font-size: 18px; cursor:pointer; color:#64748b;"><i class="fas fa-times"></i></button>
-            </div>
-            <form onsubmit="processarDoacaoModal(event)">
-                <div class="campo-grupo">
-                    <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 3px;">Beneficiário:</label>
-                    <select id="beneficiarioModal" required>
-                        <option value="">Selecione...</option>
-                        <option value="Ana Beatriz">Artista: Ana Beatriz</option>
-                        <option value="ONG Itajubá Solidário">ONG: Itajubá Solidário</option>
-                        <option value="Fundo de Cultura">Fundo Municipal de Cultura</option>
-                    </select>
-                </div>
-                <div class="campo-grupo">
-                    <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 3px;">Valor (R$):</label>
-                    <input type="number" id="valorModal" placeholder="Ex: 20.00" min="5" step="5" required>
-                </div>
-                <button type="submit" class="btn-enviar" style="width: 100%; border-radius: 8px; padding: 10px;">Concluir Doação</button>
-            </form>
+    <!-- 4. MODAL TELA CHEIA: SUPORTE & FAQ -->
+    <div class="modal-fullscreen" id="modalSuporte">
+        <div class="modal-header" style="background: #2c3e50;">
+            <h3><i class="fas fa-headset"></i> Central de Ajuda & Ouvidoria</h3>
+            <button class="btn-fechar-modal" onclick="fecharTelaCheia('modalSuporte')"><i class="fas fa-times"></i></button>
         </div>
-    </div>
-
-    <!-- Modal de Suporte -->
-    <div class="modal-overlay" id="modalSuporte">
-        <div class="modal-content" style="max-width: 500px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3><i class="fas fa-headset" style="color:var(--primario-escuro)"></i> Central de Ajuda & Suporte</h3>
-                <button onclick="fecharSuporte()" style="background:none; border:none; font-size: 18px; cursor:pointer; color:#64748b;"><i class="fas fa-times"></i></button>
-            </div>
-            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Tire as suas dúvidas sobre o funcionamento do Civita ou envie uma mensagem direta para a equipa técnica.</p>
+        <div class="modal-body">
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Tire dúvidas sobre o funcionamento do Civita ou envie um chamado direto para a equipe de engenharia e urbanismo.</p>
             
-            <div style="margin-bottom: 20px;">
-                <h4 style="font-size: 13px; color: var(--texto-escuro); margin-bottom: 8px;">Perguntas Frequentes (FAQ)</h4>
+            <div style="margin-bottom: 25px;">
+                <h4 style="font-size: 14px; color: var(--texto-escuro); margin-bottom: 10px;">Perguntas Frequentes (FAQ)</h4>
                 <div class="faq-item">
                     <div class="faq-pergunta" onclick="toggleFaq(this)">Como a minha denúncia chega à Prefeitura? <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-resposta">As denúncias enviadas ficam disponíveis em tempo real na Central de Comando municipal para triagem e despacho de equipes.</div>
+                    <div class="faq-resposta">O sistema armazena os dados na Central Municipal de Comando em tempo real para despacho imediato de equipes de manutenção urbana.</div>
                 </div>
                 <div class="faq-item">
-                    <div class="faq-pergunta" onclick="toggleFaq(this)">Posso enviar fotos sem internet? <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-resposta">O Civita guarda os dados localmente no seu dispositivo e sincroniza assim que detetar conexão ativa.</div>
+                    <div class="faq-pergunta" onclick="toggleFaq(this)">O Civita funciona offline em Itajubá? <i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-resposta">Sim, o aplicativo armazena cache local das ocorrências e sincroniza assim que houver conexão estável de internet.</div>
                 </div>
             </div>
 
-            <h4 style="font-size: 13px; color: var(--texto-escuro); margin-bottom: 8px;">Fale Connosco</h4>
+            <h4 style="font-size: 14px; color: var(--texto-escuro); margin-bottom: 10px;">Contato Direto com a Ouvidoria</h4>
             <form onsubmit="enviarSuporte(event)">
                 <div class="campo-grupo">
-                    <input type="text" placeholder="O seu nome" required>
+                    <label>Seu Nome:</label>
+                    <input type="text" placeholder="Nome completo" required>
                 </div>
                 <div class="campo-grupo">
-                    <input type="email" placeholder="O seu e-mail ou contacto" required>
+                    <label>Seu E-mail ou Telefone:</label>
+                    <input type="text" placeholder="E-mail ou WhatsApp para retorno" required>
                 </div>
                 <div class="campo-grupo">
-                    <textarea rows="2" placeholder="Escreva a sua mensagem ou relato de erro..." required></textarea>
+                    <label>Mensagem:</label>
+                    <textarea rows="3" placeholder="Escreva seu relato, sugestão ou relato de erro..." required></textarea>
                 </div>
-                <button type="submit" class="btn-enviar" style="width:100%; border-radius:8px; padding:10px;">Enviar Mensagem</button>
+                <button type="submit" class="btn-enviar" style="width:100%; border-radius:10px; padding:12px;">Enviar Mensagem</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal de Configurações -->
-    <div class="modal-overlay" id="modalConfig">
-        <div class="modal-content" style="max-width: 450px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3><i class="fas fa-cog" style="color:var(--texto-escuro)"></i> Configurações do App</h3>
-                <button onclick="fecharConfiguracoes()" style="background:none; border:none; font-size: 18px; cursor:pointer; color:#64748b;"><i class="fas fa-times"></i></button>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 15px; font-size: 14px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+    <!-- 5. MODAL TELA CHEIA: CONFIGURAÇÕES -->
+    <div class="modal-fullscreen" id="modalConfig">
+        <div class="modal-header" style="background: #475569;">
+            <h3><i class="fas fa-cog"></i> Ajustes do Aplicativo</h3>
+            <button class="btn-fechar-modal" onclick="fecharTelaCheia('modalConfig')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div style="display: flex; flex-direction: column; gap: 20px; font-size: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
                     <div>
                         <strong>Notificações Push</strong>
-                        <p style="font-size: 12px; color: #64748b;">Receber avisos sobre o estado das denúncias</p>
+                        <p style="font-size: 12px; color: #64748b;">Receber atualizações sobre o andamento das suas denúncias</p>
                     </div>
-                    <input type="checkbox" checked style="width: 18px; height: 18px; accent-color: var(--primario);">
+                    <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--primario);">
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
                     <div>
                         <strong>Modo de Alto Contraste</strong>
-                        <p style="font-size: 12px; color: #64748b;">Facilita a leitura visual (Acessibilidade)</p>
+                        <p style="font-size: 12px; color: #64748b;">Facilita a legibilidade visual para acessibilidade</p>
                     </div>
-                    <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--primario);">
+                    <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--primario);">
                 </div>
 
                 <div class="campo-grupo">
-                    <label style="font-size: 12px; font-weight: bold; color: var(--texto-escuro); margin-bottom: 4px; display: block;">Raio de Atuação do Mapa</label>
+                    <label>Perímetro de Varredura do Mapa:</label>
                     <select class="campo-grupo" style="margin:0;">
-                        <option>Itajubá (Centro e Bairros)</option>
-                        <option>Distritos Próximos</option>
+                        <option>Itajubá - Zona Urbana Central e Bairros</option>
+                        <option>Itajubá - Distrito Industrial e Arredores</option>
                     </select>
                 </div>
 
-                <div style="background: #f8fafc; padding: 12px; border-radius: 8px; text-align: center; font-size: 12px; color: #64748b;">
-                    <b>Civita v1.0.0 (TACK 2026 Challenge)</b><br>Desenvolvido para cidades inteligentes.
+                <div style="background: #f8fafc; padding: 15px; border-radius: 10px; text-align: center; font-size: 12px; color: #64748b;">
+                    <b>Civita v2.0.0 (Edição Itajubá Inteligente)</b><br>Desenvolvido para cidades sustentáveis e participativas.
                 </div>
 
-                <button onclick="fecharConfiguracoes()" class="btn-enviar" style="width:100%; border-radius:8px; padding:10px;">Guardar Alterações</button>
+                <button onclick="fecharTelaCheia('modalConfig')" class="btn-enviar" style="width:100%; border-radius:10px; padding:12px;">Salvar Preferências</button>
             </div>
         </div>
     </div>
@@ -437,9 +450,10 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Limites estritos centrados estritamente em Itajubá / MG
         const boundsItajuba = L.latLngBounds(
-            [-22.5000, -45.5200], 
-            [-22.3500, -45.3800]  
+            [-22.4800, -45.5000], 
+            [-22.3800, -45.4000]  
         );
 
         const mapa = L.map('mapa', {
@@ -455,20 +469,60 @@
 
         setTimeout(() => mapa.invalidateSize(), 100);
 
-        function abrirModal() { document.getElementById('modalDenuncia').style.display = 'flex'; }
-        function fecharModal() { document.getElementById('modalDenuncia').style.display = 'none'; }
+        // Banco de ruas reais de Itajubá com coordenadas exatas para correção do filtro de busca
+        const ruasItajuba = {
+            "av bps": [-22.4275, -45.4510],
+            "avenida bps": [-22.4275, -45.4510],
+            "praca getulio vargas": [-22.4230, -45.4550],
+            "praça getulio vargas": [-22.4230, -45.4550],
+            "rua major belo": [-22.4210, -45.4500],
+            "av dr delfim moreira": [-22.4240, -45.4530],
+            "avenida dr delfim moreira": [-22.4240, -45.4530],
+            "centro": [-22.4250, -45.4520],
+            "pinheirinho": [-22.4180, -45.4580],
+            "santos dumont": [-22.4300, -45.4700]
+        };
 
-        function abrirCultura(e) { e.preventDefault(); document.getElementById('modalCultura').style.display = 'flex'; }
-        function fecharCultura() { document.getElementById('modalCultura').style.display = 'none'; }
+        function buscarRua(event) {
+            if (event.key === 'Enter') {
+                const termo = document.getElementById('inputBusca').value.toLowerCase().trim();
+                let encontrado = false;
 
-        function abrirDoacoes() { document.getElementById('modalDoacoes').style.display = 'flex'; }
-        function fecharDoacoes() { document.getElementById('modalDoacoes').style.display = 'none'; }
+                for (let chave in ruasItajuba) {
+                    if (termo.includes(chave)) {
+                        const coords = ruasItajuba[chave];
+                        mapa.setView(coords, 17);
+                        L.marker(coords).addTo(mapa).bindPopup(`<b>Local Encontrado:</b><br>${document.getElementById('inputBusca').value}`).openPopup();
+                        encontrado = true;
+                        break;
+                    }
+                }
 
-        function abrirSuporte(e) { e.preventDefault(); document.getElementById('modalSuporte').style.display = 'flex'; }
-        function fecharSuporte() { document.getElementById('modalSuporte').style.display = 'none'; }
+                if (!encontrado) {
+                    alert("Localidade não encontrada nos registros específicos de Itajubá. Tente termos como 'Av. BPS', 'Praça Getúlio Vargas' ou 'Centro'.");
+                }
+            }
+        }
 
-        function abrirConfiguracoes(e) { e.preventDefault(); document.getElementById('modalConfig').style.display = 'flex'; }
-        function fecharConfiguracoes() { document.getElementById('modalConfig').style.display = 'none'; }
+        // Funções de controle de Modais Tela Cheia
+        function abrirModalDenuncia() { document.getElementById('modalDenuncia').style.display = 'flex'; }
+        
+        function abrirTelaCheia(idModal) {
+            document.getElementById(idModal).style.display = 'flex';
+            if (idModal === 'modalCentral') {
+                carregarListaCentral();
+            }
+        }
+        
+        function fecharTelaCheia(idModal) {
+            document.getElementById(idModal).style.display = 'none';
+        }
+
+        function alternarAba(e, aba) {
+            e.preventDefault();
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+        }
 
         function toggleFaq(el) {
             const resp = el.nextElementSibling;
@@ -477,17 +531,9 @@
 
         function enviarSuporte(e) {
             e.preventDefault();
-            alert("Mensagem enviada com sucesso para a equipa de suporte do Civita!");
-            fecharSuporte();
+            alert("Mensagem transmitida com sucesso para a Ouvidoria Municipal!");
+            fecharTelaCheia('modalSuporte');
             e.target.reset();
-        }
-
-        function processarDoacaoModal(event) {
-            event.preventDefault();
-            const valor = document.getElementById('valorModal').value;
-            alert(`Obrigado pelo apoio! Doação de R$ ${valor} efetuada com sucesso.`);
-            fecharDoacoes();
-            event.target.reset();
         }
 
         function selecionarCategoria(elemento, valor, cor) {
@@ -500,11 +546,11 @@
         function mostrarNomeFoto(input) {
             const aviso = document.getElementById('nomeFoto');
             if (input.files && input.files[0]) {
-                aviso.innerText = `📸 Foto: ${input.files[0].name}`;
-                aviso.style.color = "#16a34a";
+                aviso.innerText = `📸 Anexo carregado: ${input.files[0].name}`;
             }
         }
 
+        // Sistema de Salvamento e Central de Comando
         function salvarDenuncia(event) {
             event.preventDefault();
             const categoria = document.getElementById('categoriaSelecionada').value;
@@ -512,12 +558,14 @@
             const endereco = document.getElementById('localizacaoTxt').value;
             const obs = document.getElementById('observacoes').value;
             const fotoInput = document.getElementById('fotoInput');
-            const nomeFoto = (fotoInput.files && fotoInput.files[0]) ? fotoInput.files[0].name : null;
+            const nomeFoto = (fotoInput.files && fotoInput.files[0]) ? fotoInput.files[0].name : "Sem foto";
             
-            const lat = -22.4250 + ((Math.random() - 0.5) * 0.008);
-            const lon = -45.4520 + ((Math.random() - 0.5) * 0.008);
+            // Gerar coordenadas dentro do perímetro urbano de Itajubá
+            const lat = -22.4250 + ((Math.random() - 0.5) * 0.006);
+            const lon = -45.4520 + ((Math.random() - 0.5) * 0.006);
 
             const novaOcorrencia = {
+                id: Math.floor(Math.random() * 90000) + 10000,
                 categoria: categoria,
                 cor: cor,
                 endereco: endereco,
@@ -525,31 +573,70 @@
                 foto: nomeFoto,
                 lat: lat,
                 lon: lon,
-                data: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
+                status: 'Em Triagem pela Central',
+                data: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
             };
 
             let listaDenuncias = JSON.parse(localStorage.getItem('civita_denuncias')) || [];
-            listaDenuncias.push(novaOcorrencia);
+            listaDenuncias.unshift(novaOcorrencia);
             localStorage.setItem('civita_denuncias', JSON.stringify(listaDenuncias));
 
-            const iconePersonalizado = L.divIcon({
-                className: 'custom-pin',
-                html: `<div style="background-color: ${cor}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>`,
-                iconSize: [24, 24],
-                iconAnchor: [12, 12]
-            });
+            adicionarMarcadorMapa(novaOcorrencia);
 
-            const marcador = L.marker([lat, lon], { icon: iconePersonalizado }).addTo(mapa);
-            marcador.bindPopup(`<b>${categoria}</b><br>${endereco}`).openPopup();
-            mapa.setView([lat, lon], 16);
-            
-            fecharModal();
-            alert("Denúncia guardada com sucesso e enviada para a Central!");
+            fecharTelaCheia('modalDenuncia');
+            alert("Denúncia registrada e enviada diretamente para a Central de Comando!");
             
             document.getElementById('localizacaoTxt').value = '';
             document.getElementById('observacoes').value = '';
             document.getElementById('nomeFoto').innerText = '';
         }
+
+        function adicionarMarcadorMapa(ocorrencia) {
+            const iconePersonalizado = L.divIcon({
+                className: 'custom-pin',
+                html: `<div style="background-color: ${ocorrencia.cor}; width: 26px; height: 26px; border-radius: 50%; border: 3px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.4);"></div>`,
+                iconSize: [26, 26],
+                iconAnchor: [13, 13]
+            });
+
+            const marcador = L.marker([ocorrencia.lat, ocorrencia.lon], { icon: iconePersonalizado }).addTo(mapa);
+            marcador.bindPopup(`<b>[#${ocorrencia.id}] ${ocorrencia.categoria}</b><br>📍 ${ocorrencia.endereco}<br>💬 ${ocorrencia.obs}`);
+        }
+
+        function carregarListaCentral() {
+            const container = document.getElementById('containerListaDenuncias');
+            let listaDenuncias = JSON.parse(localStorage.getItem('civita_denuncias')) || [];
+
+            if (listaDenuncias.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: #64748b; padding: 30px;">Nenhuma denúncia registrada até o momento na Central.</p>`;
+                return;
+            }
+
+            let html = '';
+            listaDenuncias.forEach(item => {
+                html += `
+                    <div class="card-denuncia-central">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: var(--texto-escuro); font-size: 14px;"><i class="fas fa-bullhorn" style="color: ${item.cor};"></i> #${item.id} - ${item.categoria}</strong>
+                            <span class="status-badge">${item.status}</span>
+                        </div>
+                        <p style="font-size: 13px; color: #475569;"><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> ${item.endereco}</p>
+                        <p style="font-size: 12px; color: #64748b; background: #f8fafc; padding: 6px; border-radius: 6px;"><b>Relato:</b> ${item.obs || 'Nenhuma descrição adicional.'}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #94a3b8; margin-top: 4px;">
+                            <span>📸 ${item.foto}</span>
+                            <span>🕒 ${item.data}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Carregar marcadores salvos no mapa ao iniciar
+        window.addEventListener('DOMContentLoaded', () => {
+            let listaDenuncias = JSON.parse(localStorage.getItem('civita_denuncias')) || [];
+            listaDenuncias.forEach(item => adicionarMarcadorMapa(item));
+        });
     </script>
 </body>
 </html>
