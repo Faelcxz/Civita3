@@ -74,7 +74,7 @@
             border-radius: 0 0 10px 10px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
             z-index: 2000; 
-            max-height: 200px; 
+            max-height: 250px; 
             overflow-y: auto;
         }
 
@@ -135,7 +135,7 @@
         }
         .nav-item i { font-size: 16px; margin-bottom: 3px; }
 
-        /* Modais Tela Cheia (deixam espaço para a barra verde inferior) */
+        /* Modais Tela Cheia */
         .modal-fullscreen {
             display: none;
             position: fixed;
@@ -208,7 +208,6 @@
         }
         .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: #fef3c7; color: #d97706; }
 
-        /* Grade Pinterest Galeria Cultural com imagens IA */
         .pinterest-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -237,18 +236,19 @@
         <img src="logo.png" alt="Civita Logo" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3177/3177440.png'">
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" placeholder="Digite qualquer rua ou bairro em Itajubá..." id="inputBusca" oninput="buscarRuasAutomatico(this.value)">
+            <!-- Busca livre para ruas, estabelecimentos, comércios, sem frescura de digitar certinho -->
+            <input type="text" placeholder="Busque ruas, comércios ou estabelecimentos (ex: mercado, farmacia, praca)..." id="inputBusca" oninput="buscarLocalInteligente(this.value)">
             <div id="sugestoesBusca"></div>
         </div>
     </header>
 
     <div id="mapa"></div>
 
-    <button class="btn-denuncia" onclick="abrirModalDenuncia()">
+    <button class="btn-denuncia" onclick="abrirModalDenuncia('')">
         <i class="fas fa-camera"></i> Nova Denúncia
     </button>
 
-    <!-- Barra inferior fixa visível em todas as telas -->
+    <!-- Barra inferior fixa -->
     <nav class="bottom-nav">
         <a href="#" class="nav-item active" onclick="irParaInicio(event)"><i class="fas fa-home"></i><span>Início</span></a>
         <a href="#" class="nav-item" onclick="abrirTelaCheia('modalCentral')"><i class="fas fa-shield-alt"></i><span>Central</span></a>
@@ -276,10 +276,10 @@
                     <div class="cat-card" onclick="selecionarCategoria(this, 'Buraco na Via', '#e74c3c')">
                         <i class="fas fa-road" style="color: #e74c3c;"></i><span>Buraco na Via</span>
                     </div>
-                    <div class="cat-card" onclick="selecionarCategoria(this, 'Acessibilidade', '#2ecc71')">
-                        <i class="fas fa-wheelchair" style="color: #2ecc71;"></i><span>Acessibilidade</span>
+                    <div class="cat-card" onclick="selecionarCategoria(this, 'Falta de Acessibilidade', '#2ecc71')">
+                        <i class="fas fa-wheelchair" style="color: #2ecc71;"></i><span>Acessibilidade / Estabelecimento</span>
                     </div>
-                    <div class="cat-card" onclick="selecionarCategoria(this, 'Iluminação Pública', '#f39c12')" style="grid-column: span 2;">
+                    <div class="cat-card" onclick="selecionarCategoria(this, 'Iluminação / Outros', '#f39c12')" style="grid-column: span 2;">
                         <i class="fas fa-lightbulb" style="color: #f39c12;"></i><span>Iluminação / Sinalização</span>
                     </div>
                 </div>
@@ -287,8 +287,8 @@
                 <input type="hidden" id="corSelecionada" value="#3498db">
 
                 <div class="campo-grupo">
-                    <label>Endereço ou Ponto de Referência em Itajubá:</label>
-                    <input type="text" id="localizacaoTxt" placeholder="Ex: Avenida BPS, 1303 - Pinheirinho" required>
+                    <label>Endereço ou Nome do Estabelecimento:</label>
+                    <input type="text" id="localizacaoTxt" placeholder="Ex: Supermercado tal, Loja X ou Rua Y" required>
                 </div>
 
                 <div class="campo-grupo">
@@ -301,8 +301,8 @@
                 </div>
 
                 <div class="campo-grupo">
-                    <label>Descrição Detalhada:</label>
-                    <textarea id="observacoes" rows="3" placeholder="Relate o problema com detalhes para a equipe técnica..."></textarea>
+                    <label>Descrição Detalhada (ex: falta rampa, calçada quebrada):</label>
+                    <textarea id="observacoes" rows="3" placeholder="Descreva o problema encontrado no local..."></textarea>
                 </div>
 
                 <div class="botoes-acoes">
@@ -313,14 +313,13 @@
         </div>
     </div>
 
-    <!-- 2. MODAL TELA CHEIA: CENTRAL DE COMANDO COM LOGIN DE ADMINISTRADOR -->
+    <!-- 2. MODAL TELA CHEIA: CENTRAL DE COMANDO -->
     <div class="modal-fullscreen" id="modalCentral">
         <div class="modal-header" style="background: #1e293b;">
             <h3><i class="fas fa-shield-alt" style="color:var(--primario)"></i> Central de Comando & Gestão Municipal</h3>
             <button class="btn-fechar-modal" onclick="fecharTodasTelas()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <!-- Tela de Login do Admin -->
             <div id="adminLoginBox" style="max-width: 400px; margin: 40px auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
                 <div style="text-align: center; margin-bottom: 20px;">
                     <i class="fas fa-user-shield" style="font-size: 40px; color: var(--texto-escuro); margin-bottom: 10px;"></i>
@@ -340,7 +339,6 @@
                 </form>
             </div>
 
-            <!-- Painel Protegido -->
             <div id="adminPainelBox" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <p style="font-size: 13px; color: #64748b;">Painel administrativo logado com sucesso.</p>
@@ -354,7 +352,7 @@
         </div>
     </div>
 
-    <!-- 3. MODAL TELA CHEIA: CULTURA & ARTE (20+ Artes geradas por IA) -->
+    <!-- 3. MODAL TELA CHEIA: CULTURA & ARTE -->
     <div class="modal-fullscreen" id="modalCultura">
         <div class="modal-header" style="background: #8bb30d;">
             <h3><i class="fas fa-palette"></i> Circuito Cultural & Galeria IA de Itajubá</h3>
@@ -389,8 +387,8 @@
                     <div class="faq-resposta">O sistema armazena os dados na Central Municipal de Comando em tempo real para despacho imediato de equipes de manutenção urbana.</div>
                 </div>
                 <div class="faq-item">
-                    <div class="faq-pergunta" onclick="toggleFaq(this)">O Civita funciona offline em Itajubá? <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-resposta">Sim, o aplicativo armazena cache local das ocorrências e sincroniza assim que houver conexão estável de internet.</div>
+                    <div class="faq-pergunta" onclick="toggleFaq(this)">Posso denunciar estabelecimentos sem rampa de acesso? <i class="fas fa-chevron-down"></i></div>
+                    <div class="faq-resposta">Sim! Na busca você pode localizar qualquer estabelecimento comercial, clicar nele e abrir uma denúncia de acessibilidade instantaneamente.</div>
                 </div>
             </div>
 
@@ -446,7 +444,7 @@
                 </div>
 
                 <div style="background: #f8fafc; padding: 15px; border-radius: 10px; text-align: center; font-size: 12px; color: #64748b;">
-                    <b>Civita v2.2.0 (Edição Itajubá Inteligente)</b><br>Desenvolvido para cidades sustentáveis e participativas.
+                    <b>Civita v2.3.0 (Edição Itajubá Inteligente)</b><br>Desenvolvido para cidades sustentáveis e participativas.
                 </div>
 
                 <button onclick="fecharTodasTelas()" class="btn-enviar" style="width:100%; border-radius:10px; padding:12px;">Salvar Preferências</button>
@@ -457,7 +455,7 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Limites estritos centrados estritamente em Itajubá / MG
+        // Limites estritos centrados em Itajubá / MG
         const boundsItajuba = L.latLngBounds(
             [-22.4800, -45.5000], 
             [-22.3800, -45.4000]  
@@ -476,19 +474,20 @@
 
         setTimeout(() => mapa.invalidateSize(), 100);
 
-        // Sistema de busca automatizada e sugestões em tempo real restritas a Itajubá
+        // Busca Inteligente e Tolerante (encontra ruas, praças e estabelecimentos sem exigir digitação perfeita)
         let timerBusca;
-        function buscarRuasAutomatico(termo) {
+        function buscarLocalInteligente(termo) {
             clearTimeout(timerBusca);
             const containerSugestoes = document.getElementById('sugestoesBusca');
             
-            if (termo.length < 3) {
+            if (termo.length < 2) {
                 containerSugestoes.innerHTML = '';
                 return;
             }
 
             timerBusca = setTimeout(() => {
-                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(termo)}, Itajubá, Minas Gerais, Brasil`;
+                // Buscamos livremente no Nominatim focando em Itajubá para achar comércios, escolas, mercados, ruas, etc.
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(termo)}, Itajubá, MG&addressdetails=1&limit=6`;
 
                 fetch(url)
                     .then(response => response.json())
@@ -496,7 +495,7 @@
                         containerSugestoes.innerHTML = '';
                         
                         if (data.length === 0) {
-                            containerSugestoes.innerHTML = `<div style="padding: 10px; font-size: 12px; color: #64748b;">Nenhum local encontrado em Itajubá.</div>`;
+                            containerSugestoes.innerHTML = `<div style="padding: 10px; font-size: 12px; color: #64748b;">Nenhum local ou estabelecimento encontrado. Tente outro termo.</div>`;
                             return;
                         }
 
@@ -507,14 +506,25 @@
                             div.style.borderBottom = "1px solid #f1f5f9";
                             div.style.cursor = "pointer";
                             div.style.color = "#2c3e50";
-                            div.innerHTML = `<i class="fas fa-map-marker-alt" style="color: #e74c3c; margin-right: 6px;"></i> ${local.display_name}`;
+                            div.innerHTML = `<i class="fas fa-map-marker-alt" style="color: #e74c3c; margin-right: 6px;"></i> <b>${local.display_name}</b>`;
                             
                             div.onclick = () => {
                                 const lat = parseFloat(local.lat);
                                 const lon = parseFloat(local.lon);
                                 
                                 mapa.setView([lat, lon], 17);
-                                L.marker([lat, lon]).addTo(mapa).bindPopup(`<b>Local Selecionado:</b><br>${local.display_name}`).openPopup();
+                                
+                                // Popup com opção direta para reportar problema naquele estabelecimento/local
+                                const popupHtml = `
+                                    <div style="font-size: 12px;">
+                                        <b>${local.display_name}</b><br><br>
+                                        <button onclick="abrirModalDenuncia('${local.display_name.replace(/'/g, "\\'")}')" style="background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                                            <i class="fas fa-bullhorn"></i> Denunciar este Local
+                                        </button>
+                                    </div>
+                                `;
+
+                                L.marker([lat, lon]).addTo(mapa).bindPopup(popupHtml).openPopup();
                                 
                                 document.getElementById('inputBusca').value = local.display_name;
                                 containerSugestoes.innerHTML = '';
@@ -523,8 +533,8 @@
                             containerSugestoes.appendChild(div);
                         });
                     })
-                    .catch(err => console.error("Erro na busca de endereços:", err));
-            }, 300);
+                    .catch(err => console.error("Erro na busca:", err));
+            }, 250);
         }
 
         document.addEventListener('click', (e) => {
@@ -533,10 +543,13 @@
             }
         });
 
-        // Funções de controle de Modais e Navegação sem perder a barra inferior
-        function abrirModalDenuncia() {
+        // Funções de controle de Modais e Navegação
+        function abrirModalDenuncia(enderecoPreenchido = '') {
             fecharTodasTelas();
             document.getElementById('modalDenuncia').style.display = 'flex';
+            if (enderecoPreenchido) {
+                document.getElementById('localizacaoTxt').value = enderecoPreenchido;
+            }
         }
         
         function abrirTelaCheia(idModal) {
@@ -597,7 +610,7 @@
             }
         }
 
-        // Sistema de Login do Administrador para a Central
+        // Sistema de Login Admin
         function fazerLoginAdmin(e) {
             e.preventDefault();
             const u = document.getElementById('adminUser').value.trim();
@@ -701,7 +714,6 @@
             container.innerHTML = html;
         }
 
-        // Geração automática de mais de 20 artes geradas por IA para a galeria cultural
         function gerarGaleriaCulturaIA() {
             const grid = document.getElementById('galeriaCulturaGrid');
             const autores = ["Ana Beatriz", "Carlos Silva", "Marcos Lima", "Julia Dias", "Lucas Martins", "Beatriz Souza", "Gabriel Faria"];
