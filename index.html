@@ -39,7 +39,16 @@
             z-index: 1000;
             display: flex;
             align-items: center;
-            height: 60px;
+            gap: 12px;
+            height: 65px;
+        }
+
+        .logo-img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         }
 
         .search-container {
@@ -57,7 +66,7 @@
 
         #mapa {
             position: absolute;
-            top: 60px;
+            top: 65px;
             bottom: var(--nav-height);
             left: 0; right: 0;
             width: 100%;
@@ -154,7 +163,38 @@
         .btn-cancelar { background: #f1f5f9; color: #64748b; }
         .btn-enviar { background: var(--primario); color: white; }
 
-        /* Estilo para Acordeão de FAQ no Suporte */
+        .pinterest-grid {
+            display: columns;
+            column-count: 2;
+            column-gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .pin-card {
+            break-inside: avoid;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .pin-card:hover { transform: translateY(-2px); }
+        .pin-img {
+            background: #e2e8f0;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #94a3b8;
+        }
+        .pin-body { padding: 10px; }
+        .pin-title { font-size: 12px; font-weight: bold; color: var(--texto-escuro); margin-bottom: 2px; }
+        .pin-author { font-size: 11px; color: #64748b; margin-bottom: 8px; }
+
         .faq-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; padding: 10px 12px; }
         .faq-pergunta { font-weight: bold; font-size: 13px; color: var(--texto-escuro); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .faq-resposta { font-size: 12px; color: #64748b; margin-top: 6px; line-height: 1.4; display: none; }
@@ -163,6 +203,7 @@
 <body>
 
     <header>
+        <img src="logo.png" alt="Civita Logo" class="logo-img">
         <div class="search-container">
             <i class="fas fa-search"></i>
             <input type="text" placeholder="Pesquisar ruas, obras ou denúncias..." id="inputBusca">
@@ -178,7 +219,6 @@
     <nav class="bottom-nav">
         <a href="#" class="nav-item active"><i class="fas fa-home"></i><span>Início</span></a>
         <a href="#" class="nav-item" onclick="abrirCultura(event)"><i class="fas fa-palette"></i><span>Cultura</span></a>
-        <a href="central.html" class="nav-item"><i class="fas fa-headset"></i><span>Central</span></a>
         <a href="#" class="nav-item" onclick="abrirSuporte(event)"><i class="fas fa-question-circle"></i><span>Suporte</span></a>
         <a href="#" class="nav-item" onclick="abrirConfiguracoes(event)"><i class="fas fa-cog"></i><span>Configurações</span></a>
     </nav>
@@ -233,53 +273,85 @@
         </div>
     </div>
 
-    <!-- Modal de Cultura e Doações -->
+    <!-- Modal de Cultura -->
     <div class="modal-overlay" id="modalCultura">
         <div class="modal-content" style="max-width: 550px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3><i class="fas fa-palette" style="color:var(--primario-escuro)"></i> Cultura & Arte de Itajubá</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3><i class="fas fa-palette" style="color:var(--primario-escuro)"></i> Galeria Cultural de Itajubá</h3>
                 <button onclick="fecharCultura()" style="background:none; border:none; font-size: 18px; cursor:pointer; color:#64748b;"><i class="fas fa-times"></i></button>
             </div>
-            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px; line-height: 1.4;">
-                Explore a arte independente da cidade! Apoie artistas locais adquirindo obras ou fazendo uma doação voluntária para artistas em exposição e projetos sociais.
+            
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">
+                Explore a arte independente da cidade em formato de galeria. Apoie os artistas locais diretamente pelas obras ou utilize o botão de doações abaixo.
             </p>
-            <div style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
-                <div style="display: flex; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; margin-bottom: 10px; align-items: center;">
-                    <div style="background: #e2e8f0; width: 70px; height: 70px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #94a3b8;"><i class="fas fa-image"></i></div>
-                    <div style="flex: 1;">
-                        <h4 style="font-size: 14px; color: var(--texto-escuro);">Rua Nova em Óleo</h4>
-                        <p style="font-size: 12px; color: #64748b;">Por Ana Beatriz <span style="color: #e67e22; font-weight: bold;">(Exposição)</span></p>
-                        <button onclick="preencherDoacaoModal('Ana Beatriz')" style="margin-top: 6px; background: #f39c12; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">Apoiar Artista</button>
+
+            <button onclick="abrirDoacoes()" style="width: 100%; background: linear-gradient(135deg, #f39c12, #d35400); color: white; border: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);">
+                <i class="fas fa-hand-holding-heart"></i> Fazer Doação Voluntária para Artistas & ONGs
+            </button>
+
+            <div class="pinterest-grid">
+                <div class="pin-card">
+                    <div class="pin-img"><i class="fas fa-image"></i></div>
+                    <div class="pin-body">
+                        <div class="pin-title">Rua Nova em Óleo</div>
+                        <div class="pin-author">Por Ana Beatriz</div>
+                        <button onclick="alert('Exposição artística municipal')" style="width:100%; background:#f1f5f9; color:#475569; border:none; padding:5px; border-radius:6px; font-size:10px; font-weight:bold; cursor:pointer;">Ver Detalhes</button>
                     </div>
                 </div>
-                <div style="display: flex; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; margin-bottom: 15px; align-items: center;">
-                    <div style="background: #e2e8f0; width: 70px; height: 70px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #94a3b8;"><i class="fas fa-image"></i></div>
-                    <div style="flex: 1;">
-                        <h4 style="font-size: 14px; color: var(--texto-escuro);">Igreja Matriz em Aquarela</h4>
-                        <p style="font-size: 12px; color: #64748b;">Por Carlos Silva — <b style="color: #27ae60;">R$ 120,00</b></p>
-                        <button onclick="alert('Redirecionando para compra segura da obra!')" style="margin-top: 6px; background: #27ae60; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">Comprar Obra</button>
+
+                <div class="pin-card">
+                    <div class="pin-img"><i class="fas fa-image"></i></div>
+                    <div class="pin-body">
+                        <div class="pin-title">Igreja Matriz</div>
+                        <div class="pin-author">Carlos Silva — R$ 120</div>
+                        <button onclick="alert('Redirecionando para compra da obra!')" style="width:100%; background:#27ae60; color:white; border:none; padding:5px; border-radius:6px; font-size:10px; font-weight:bold; cursor:pointer;">Comprar Obra</button>
                     </div>
                 </div>
-                <div style="background: #f4f8e8; border: 2px dashed var(--primario); border-radius: 12px; padding: 15px;">
-                    <h4 style="font-size: 13px; color: var(--texto-escuro); margin-bottom: 8px;"><i class="fas fa-hand-holding-heart"></i> Apoio Solidário & Doações</h4>
-                    <form onsubmit="processarDoacaoModal(event)">
-                        <div style="margin-bottom: 8px;">
-                            <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 3px;">Beneficiário:</label>
-                            <select id="beneficiarioModal" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" required>
-                                <option value="">Selecione...</option>
-                                <option value="Ana Beatriz">Artista: Ana Beatriz</option>
-                                <option value="ONG Itajubá Solidário">ONG: Itajubá Solidário</option>
-                                <option value="Fundo de Cultura">Fundo Municipal de Cultura</option>
-                            </select>
-                        </div>
-                        <div style="margin-bottom: 8px;">
-                            <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 3px;">Valor (R$):</label>
-                            <input type="number" id="valorModal" placeholder="Ex: 20.00" min="5" step="5" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" required>
-                        </div>
-                        <button type="submit" style="width: 100%; background: var(--primario); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer;">Concluir Doação</button>
-                    </form>
+
+                <div class="pin-card">
+                    <div class="pin-img"><i class="fas fa-image"></i></div>
+                    <div class="pin-body">
+                        <div class="pin-title">Praça Getúlio Vargas</div>
+                        <div class="pin-author">Por Marcos Lima</div>
+                        <button onclick="alert('Exposição artística municipal')" style="width:100%; background:#f1f5f9; color:#475569; border:none; padding:5px; border-radius:6px; font-size:10px; font-weight:bold; cursor:pointer;">Ver Detalhes</button>
+                    </div>
+                </div>
+
+                <div class="pin-card">
+                    <div class="pin-img"><i class="fas fa-image"></i></div>
+                    <div class="pin-body">
+                        <div class="pin-title">Pôr do Sol no Rio Sapucaí</div>
+                        <div class="pin-author">Julia Dias — R$ 85</div>
+                        <button onclick="alert('Redirecionando para compra da obra!')" style="width:100%; background:#27ae60; color:white; border:none; padding:5px; border-radius:6px; font-size:10px; font-weight:bold; cursor:pointer;">Comprar Obra</button>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal de Doações -->
+    <div class="modal-overlay" id="modalDoacoes" style="z-index: 10001;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3><i class="fas fa-hand-holding-heart" style="color:#f39c12"></i> Apoio Solidário</h3>
+                <button onclick="fecharDoacoes()" style="background:none; border:none; font-size: 18px; cursor:pointer; color:#64748b;"><i class="fas fa-times"></i></button>
+            </div>
+            <form onsubmit="processarDoacaoModal(event)">
+                <div class="campo-grupo">
+                    <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 3px;">Beneficiário:</label>
+                    <select id="beneficiarioModal" required>
+                        <option value="">Selecione...</option>
+                        <option value="Ana Beatriz">Artista: Ana Beatriz</option>
+                        <option value="ONG Itajubá Solidário">ONG: Itajubá Solidário</option>
+                        <option value="Fundo de Cultura">Fundo Municipal de Cultura</option>
+                    </select>
+                </div>
+                <div class="campo-grupo">
+                    <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 3px;">Valor (R$):</label>
+                    <input type="number" id="valorModal" placeholder="Ex: 20.00" min="5" step="5" required>
+                </div>
+                <button type="submit" class="btn-enviar" style="width: 100%; border-radius: 8px; padding: 10px;">Concluir Doação</button>
+            </form>
         </div>
     </div>
 
@@ -383,12 +455,14 @@
 
         setTimeout(() => mapa.invalidateSize(), 100);
 
-        // Modais Gerais
         function abrirModal() { document.getElementById('modalDenuncia').style.display = 'flex'; }
         function fecharModal() { document.getElementById('modalDenuncia').style.display = 'none'; }
 
         function abrirCultura(e) { e.preventDefault(); document.getElementById('modalCultura').style.display = 'flex'; }
         function fecharCultura() { document.getElementById('modalCultura').style.display = 'none'; }
+
+        function abrirDoacoes() { document.getElementById('modalDoacoes').style.display = 'flex'; }
+        function fecharDoacoes() { document.getElementById('modalDoacoes').style.display = 'none'; }
 
         function abrirSuporte(e) { e.preventDefault(); document.getElementById('modalSuporte').style.display = 'flex'; }
         function fecharSuporte() { document.getElementById('modalSuporte').style.display = 'none'; }
@@ -396,7 +470,6 @@
         function abrirConfiguracoes(e) { e.preventDefault(); document.getElementById('modalConfig').style.display = 'flex'; }
         function fecharConfiguracoes() { document.getElementById('modalConfig').style.display = 'none'; }
 
-        // Accordion FAQ Suporte
         function toggleFaq(el) {
             const resp = el.nextElementSibling;
             resp.style.display = resp.style.display === 'block' ? 'none' : 'block';
@@ -409,20 +482,11 @@
             e.target.reset();
         }
 
-        function preencherDoacaoModal(nome) {
-            const select = document.getElementById('beneficiarioModal');
-            for(let i=0; i<select.options.length; i++) {
-                if(select.options[i].text.includes(nome)) {
-                    select.selectedIndex = i;
-                    break;
-                }
-            }
-        }
         function processarDoacaoModal(event) {
             event.preventDefault();
             const valor = document.getElementById('valorModal').value;
             alert(`Obrigado pelo apoio! Doação de R$ ${valor} efetuada com sucesso.`);
-            fecharCultura();
+            fecharDoacoes();
             event.target.reset();
         }
 
