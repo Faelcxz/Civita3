@@ -59,10 +59,24 @@
             padding: 8px 15px;
             width: 100%;
             border: 1px solid #ddd;
+            position: relative;
         }
 
         .search-container i { color: #7f8c8d; margin-right: 10px; }
         .search-container input { border: none; outline: none; width: 100%; background: transparent; font-size: 1rem; color: var(--texto-escuro); }
+
+        #sugestoesBusca {
+            position: absolute; 
+            top: 100%; 
+            left: 0; 
+            width: 100%; 
+            background: white; 
+            border-radius: 0 0 10px 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+            z-index: 2000; 
+            max-height: 200px; 
+            overflow-y: auto;
+        }
 
         #mapa {
             position: absolute;
@@ -151,7 +165,7 @@
         .btn-fechar-modal { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
 
         .modal-body {
-            padding: 20px 20px 80px 20px; /* Padding extra embaixo para não cobrir o conteúdo */
+            padding: 20px 20px 80px 20px;
             max-width: 800px;
             width: 100%;
             margin: 0 auto;
@@ -220,10 +234,11 @@
 <body>
 
     <header>
-        <img src="logo.png.png" alt="Civita Logo" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3177/3177440.png'">
+        <img src="logo.png" alt="Civita Logo" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3177/3177440.png'">
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" placeholder="Buscar rua exata em Itajubá (Ex: Av. BPS, Praça Getúlio Vargas)..." id="inputBusca" onkeypress="buscarRua(event)">
+            <input type="text" placeholder="Digite qualquer rua ou bairro em Itajubá..." id="inputBusca" oninput="buscarRuasAutomatico(this.value)">
+            <div id="sugestoesBusca"></div>
         </div>
     </header>
 
@@ -325,7 +340,7 @@
                 </form>
             </div>
 
-            <!-- Painel Protegido (Visível apenas após login correto) -->
+            <!-- Painel Protegido -->
             <div id="adminPainelBox" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <p style="font-size: 13px; color: #64748b;">Painel administrativo logado com sucesso.</p>
@@ -334,9 +349,7 @@
                         <button onclick="sairAdmin()" style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold;"><i class="fas fa-sign-out-alt"></i> Sair</button>
                     </div>
                 </div>
-                <div id="containerListaDenuncias">
-                    <!-- Preenchido via JS -->
-                </div>
+                <div id="containerListaDenuncias"></div>
             </div>
         </div>
     </div>
@@ -356,9 +369,7 @@
                 <i class="fas fa-hand-holding-heart"></i> Fazer Doação Voluntária para Artistas & ONGs
             </button>
 
-            <div class="pinterest-grid" id="galeriaCulturaGrid">
-                <!-- Injetado dinamicamente com 20+ artes geradas por IA via script -->
-            </div>
+            <div class="pinterest-grid" id="galeriaCulturaGrid"></div>
         </div>
     </div>
 
@@ -435,7 +446,7 @@
                 </div>
 
                 <div style="background: #f8fafc; padding: 15px; border-radius: 10px; text-align: center; font-size: 12px; color: #64748b;">
-                    <b>Civita v2.1.0 (Edição Itajubá Inteligente)</b><br>Desenvolvido para cidades sustentáveis e participativas.
+                    <b>Civita v2.2.0 (Edição Itajubá Inteligente)</b><br>Desenvolvido para cidades sustentáveis e participativas.
                 </div>
 
                 <button onclick="fecharTodasTelas()" class="btn-enviar" style="width:100%; border-radius:10px; padding:12px;">Salvar Preferências</button>
@@ -446,7 +457,7 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Limites estritos centrados em Itajubá / MG
+        // Limites estritos centrados estritamente em Itajubá / MG
         const boundsItajuba = L.latLngBounds(
             [-22.4800, -45.5000], 
             [-22.3800, -45.4000]  
@@ -465,40 +476,62 @@
 
         setTimeout(() => mapa.invalidateSize(), 100);
 
-        // Banco de ruas reais de Itajubá com coordenadas exatas para correção do filtro de busca
-        const ruasItajuba = {
-            "av bps": [-22.4275, -45.4510],
-            "avenida bps": [-22.4275, -45.4510],
-            "praca getulio vargas": [-22.4230, -45.4550],
-            "praça getulio vargas": [-22.4230, -45.4550],
-            "rua major belo": [-22.4210, -45.4500],
-            "av dr delfim moreira": [-22.4240, -45.4530],
-            "avenida dr delfim moreira": [-22.4240, -45.4530],
-            "centro": [-22.4250, -45.4520],
-            "pinheirinho": [-22.4180, -45.4580],
-            "santos dumont": [-22.4300, -45.4700]
-        };
-
-        function buscarRua(event) {
-            if (event.key === 'Enter') {
-                const termo = document.getElementById('inputBusca').value.toLowerCase().trim();
-                let encontrado = false;
-
-                for (let chave in ruasItajuba) {
-                    if (termo.includes(chave)) {
-                        const coords = ruasItajuba[chave];
-                        mapa.setView(coords, 17);
-                        L.marker(coords).addTo(mapa).bindPopup(`<b>Local Encontrado:</b><br>${document.getElementById('inputBusca').value}`).openPopup();
-                        encontrado = true;
-                        break;
-                    }
-                }
-
-                if (!encontrado) {
-                    alert("Localidade não encontrada nos registros específicos de Itajubá. Tente termos como 'Av. BPS', 'Praça Getúlio Vargas' ou 'Centro'.");
-                }
+        // Sistema de busca automatizada e sugestões em tempo real restritas a Itajubá
+        let timerBusca;
+        function buscarRuasAutomatico(termo) {
+            clearTimeout(timerBusca);
+            const containerSugestoes = document.getElementById('sugestoesBusca');
+            
+            if (termo.length < 3) {
+                containerSugestoes.innerHTML = '';
+                return;
             }
+
+            timerBusca = setTimeout(() => {
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(termo)}, Itajubá, Minas Gerais, Brasil`;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        containerSugestoes.innerHTML = '';
+                        
+                        if (data.length === 0) {
+                            containerSugestoes.innerHTML = `<div style="padding: 10px; font-size: 12px; color: #64748b;">Nenhum local encontrado em Itajubá.</div>`;
+                            return;
+                        }
+
+                        data.forEach(local => {
+                            const div = document.createElement('div');
+                            div.style.padding = "10px 15px";
+                            div.style.fontSize = "12px";
+                            div.style.borderBottom = "1px solid #f1f5f9";
+                            div.style.cursor = "pointer";
+                            div.style.color = "#2c3e50";
+                            div.innerHTML = `<i class="fas fa-map-marker-alt" style="color: #e74c3c; margin-right: 6px;"></i> ${local.display_name}`;
+                            
+                            div.onclick = () => {
+                                const lat = parseFloat(local.lat);
+                                const lon = parseFloat(local.lon);
+                                
+                                mapa.setView([lat, lon], 17);
+                                L.marker([lat, lon]).addTo(mapa).bindPopup(`<b>Local Selecionado:</b><br>${local.display_name}`).openPopup();
+                                
+                                document.getElementById('inputBusca').value = local.display_name;
+                                containerSugestoes.innerHTML = '';
+                            };
+
+                            containerSugestoes.appendChild(div);
+                        });
+                    })
+                    .catch(err => console.error("Erro na busca de endereços:", err));
+            }, 300);
         }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                document.getElementById('sugestoesBusca').innerHTML = '';
+            }
+        });
 
         // Funções de controle de Modais e Navegação sem perder a barra inferior
         function abrirModalDenuncia() {
@@ -510,7 +543,6 @@
             fecharTodasTelas();
             document.getElementById(idModal).style.display = 'flex';
             
-            // Atualizar active da barra inferior
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             if (idModal === 'modalCentral') eventNavAtivar(1);
             if (idModal === 'modalCultura') eventNavAtivar(2);
@@ -571,7 +603,6 @@
             const u = document.getElementById('adminUser').value.trim();
             const p = document.getElementById('adminPass').value.trim();
 
-            // Credenciais de acesso do administrador
             if (u === 'admin' && p === 'admin123') {
                 document.getElementById('adminLoginBox').style.display = 'none';
                 document.getElementById('adminPainelBox').style.display = 'block';
@@ -686,7 +717,6 @@
             for (let i = 0; i < 20; i++) {
                 const autor = autores[i % autores.length];
                 const titulo = titulos[i];
-                // Imagens de alta qualidade simulando artes geradas por IA via Unsplash Seed
                 const seedImg = `https://picsum.photos/seed/itajubaart${i+1}/300/200`;
                 const preco = (i % 2 === 0) ? `R$ ${(i + 1) * 25}` : null;
 
@@ -704,7 +734,6 @@
             grid.innerHTML = html;
         }
 
-        // Inicialização ao carregar a página
         window.addEventListener('DOMContentLoaded', () => {
             let listaDenuncias = JSON.parse(localStorage.getItem('civita_denuncias')) || [];
             listaDenuncias.forEach(item => adicionarMarcadorMapa(item));
